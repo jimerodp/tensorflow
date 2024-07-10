@@ -1,6 +1,7 @@
 # tf.data service tests.
 
 load("//tensorflow:strict.default.bzl", "py_strict_library")
+load("//tensorflow:tensorflow.bzl", "tf_cc_binary")
 load("//tensorflow:tensorflow.default.bzl", "cuda_py_strict_test", "tf_py_strict_test")
 
 package(
@@ -62,6 +63,28 @@ tf_py_strict_test(
         "//tensorflow/python/framework:dtypes",
         "//tensorflow/python/framework:errors",
         "//tensorflow/python/ops:math_ops",
+        "//tensorflow/python/platform:client_testlib",
+        "@absl_py//absl/testing:parameterized",
+    ],
+)
+
+tf_cc_binary(
+    name = "test_data_transfer_test_binary",
+    testonly = True,
+    linkshared = True,
+    deps = ["//tensorflow/core/data/service:test_data_transfer"],
+)
+
+tf_py_strict_test(
+    name = "data_transfer_test",
+    size = "small",
+    srcs = ["data_transfer_test.py"],
+    data = [":test_data_transfer_test_binary"],
+    deps = [
+        ":test_base",
+        "//tensorflow/python/data/kernel_tests:test_base",
+        "//tensorflow/python/framework:combinations",
+        "//tensorflow/python/framework:errors",
         "//tensorflow/python/platform:client_testlib",
         "@absl_py//absl/testing:parameterized",
     ],
