@@ -2311,6 +2311,7 @@ cc_library(
     name = "stream_executor_util",
     srcs = ["stream_executor_util.cc"],
     hdrs = ["stream_executor_util.h"],
+    compatible_with = get_compatible_with_portable(),
     copts = tsl_copts(),
     deps = [
         ":cublas_cudnn",
@@ -2939,6 +2940,7 @@ xla_test(
 cc_library(
     name = "gpu_symbol_repository",
     hdrs = ["gpu_symbol_repository.h"],
+    compatible_with = get_compatible_with_portable(),
     deps = [
         "//xla:autotune_results_proto_cc",
         "//xla:xla_proto_cc",
