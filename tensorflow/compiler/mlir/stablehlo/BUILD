@@ -38,12 +38,12 @@ tsl_pybind_extension(
         "//tensorflow/tools/pip_package:__subpackages__",
     ],
     deps = [
+        "//third_party/nanobind",
         "//third_party/python_runtime:headers",
         "@llvm-project//llvm:Support",
         "@llvm-project//mlir:CAPIIR",
         "@llvm-project//mlir:IR",
         "@llvm-project//mlir:MLIRBindingsPythonHeadersAndDeps",
-        "@pybind11",
         "@stablehlo//:stablehlo_capi",
     ],
 )
