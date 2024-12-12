@@ -2627,15 +2627,12 @@ def py_test(
         exec_properties = tf_exec_properties(kwargs)
 
     if use_pywrap_rules():
-        test_env = {
-            "PYWRAP_TARGET": clean_dep(Label("//tensorflow/python:_pywrap_tensorflow")),
-        }
-        test_env.update(env)
         actual_deps = deps.to_list() if hasattr(deps, "to_list") else deps
+        extra_deps = [clean_dep(Label("//tensorflow/python:_pywrap_tensorflow"))]
         test_rule(
-            deps = actual_deps + [test_env["PYWRAP_TARGET"]],
+            deps = actual_deps + extra_deps,
             exec_properties = exec_properties,
-            env = test_env,
+            env = env,
             data = data,
             **kwargs
         )
