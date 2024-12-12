@@ -14,9 +14,6 @@
 
 #include "tensorflow/lite/experimental/litert/compiler/plugin/algo.h"
 
-#include <algorithm>
-#include <memory>
-#include <optional>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -24,12 +21,10 @@
 #include "absl/container/flat_hash_set.h"
 #include "absl/log/absl_check.h"
 #include "llvm/ADT/MapVector.h"
-#include "tensorflow/lite/experimental/litert/c/litert_logging.h"
 #include "tensorflow/lite/experimental/litert/c/litert_model.h"
 #include "tensorflow/lite/experimental/litert/c/litert_op_code.h"
 #include "tensorflow/lite/experimental/litert/core/model/model.h"
 #include "tensorflow/lite/experimental/litert/core/model/model_graph.h"
-#include "tensorflow/lite/schema/schema_generated.h"
 
 namespace litert::internal {
 namespace {
@@ -188,6 +183,7 @@ LiteRtOp GraphSlicer::SlicePartitionFromGraph(
   // Reuse the storage from the last op in partition to maintain
   // toplogical order.
   slicer.dispatch_op_ = partition.back();
+
   MakeDispatchOp(*slicer.dispatch_op_);
   slicer.RerouteTensorsThroughCustomOp(root);
 

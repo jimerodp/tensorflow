@@ -28,9 +28,10 @@
 #include "tensorflow/lite/experimental/litert/c/litert_dispatch_delegate.h"
 #include "tensorflow/lite/experimental/litert/cc/litert_model.h"
 #include "tensorflow/lite/experimental/litert/compiler/plugin/compiler_plugin.h"
-#include "tensorflow/lite/experimental/litert/core/model/model_buffer.h"
+#include "tensorflow/lite/experimental/litert/core/model/model_serialize.h"
 #include "tensorflow/lite/experimental/litert/runtime/external_litert_buffer_context.h"
 #include "tensorflow/lite/experimental/litert/test/common.h"
+#include "tensorflow/lite/experimental/litert/test/test_macros.h"
 #include "tensorflow/lite/experimental/litert/test/testdata/simple_model_test_vectors.h"
 #include "tensorflow/lite/interpreter.h"
 #include "tensorflow/lite/kernels/register.h"
@@ -41,8 +42,7 @@ constexpr const char* kCompilerPluginLibSearchPath = "/data/local/tmp";
 
 TEST(JitCompilation, Qualcomm) {
   auto model_path = litert::testing::GetTestFilePath(kModelFileName);
-  auto model = litert::Model::CreateFromFile(model_path);
-  ASSERT_TRUE(model);
+  auto model = litert::Model::CreateFromFile(model_path) ASSERT_TRUE(model);
 
 #if !defined(__ANDROID__)
   GTEST_SKIP() << "The rest of this test is specific to Android devices with a "
@@ -61,19 +61,12 @@ TEST(JitCompilation, Qualcomm) {
   ABSL_LOG(INFO) << "Found compiler plugin with version " << api_version->major
                  << "." << api_version->minor << "." << api_version->patch;
 
-  auto npu_bytecode = ApplyPlugin(*compiler_plugin, *model);
-  EXPECT_TRUE(npu_bytecode);
-  EXPECT_GT(npu_bytecode->Size(), 0);
-
-  auto serialized_model = litert::internal::GetModelBufWithByteCode(
-      std::move(*model->Get()), *npu_bytecode);
-  EXPECT_TRUE(serialized_model);
-
-  model = litert::Model::CreateFromBuffer(*serialized_model);
+  LITERT_ASSERT_STATUS_OK(
+      litert::internal::Apply(*compiler_plugin, *model->Get()));
+  auto serialized = litert::internal::SerializeModel(std::move(*model->Get()));
 
   auto flatbuffer_model = tflite::FlatBufferModel::BuildFromBuffer(
-      reinterpret_cast<const char*>(serialized_model->Data()),
-      serialized_model->Size());
+      serialized->StrData(), serialized->Size());
 
   EXPECT_TRUE(flatbuffer_model != nullptr);
 
