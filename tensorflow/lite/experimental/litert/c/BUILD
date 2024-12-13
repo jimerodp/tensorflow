@@ -211,6 +211,9 @@ cc_library(
     hdrs = [
         "litert_compiled_model_options.h",
     ],
+    deps = [
+        ":litert_common",
+    ],
 )
 
 cc_library(

@@ -76,7 +76,7 @@ Expected<void> LiteRtCompiledModelT::Initialize() {
 }
 
 Expected<LiteRtCompiledModelT::Ptr> LiteRtCompiledModelT::Create(
-    LiteRtModel model, LiteRtComplicationOptions complication_options) {
+    LiteRtModel model, LiteRtCompilationOptions compilation_options) {
   auto runtime = std::make_unique<LiteRtCompiledModelT>();
 
   const char* model_buffer = nullptr;
@@ -114,7 +114,7 @@ Expected<LiteRtCompiledModelT::Ptr> LiteRtCompiledModelT::Create(
   }
 
   // TODO: b/379317134 - Support other delegates with compilation options.
-  if (complication_options & kHwAccelNpu) {
+  if (compilation_options & kLiteRtHwAccelatorNpu) {
     auto dispatch_delegate_options = litert::CreateDispatchDelegateOptionsPtr();
     LiteRtDispatchDelegateAddAllocBaseOption(dispatch_delegate_options.get(),
                                              model_buffer);
