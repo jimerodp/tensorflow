@@ -124,7 +124,7 @@ class OneDnnThreadPool : public threadpool_iface {
       }
       run_jobs(balance, njobs_to_schedule, n, njobs, fn);
     } else {
-      tsl::BlockingCounter counter(njobs);
+      absl::BlockingCounter counter(njobs);
       std::function<void(int, int)> handle_range = [=, &handle_range, &counter](
                                                        int first, int last) {
         while (last - first > 1) {
